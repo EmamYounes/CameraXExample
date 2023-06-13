@@ -1,4 +1,4 @@
-package com.example.cameraxexample
+package com.example.cameraxexample.view
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -18,7 +18,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.cameraxexample.R
+import com.example.cameraxexample.adapter.GalleryAdapter
+import com.example.cameraxexample.callbacks.ClickImageCallback
 import com.example.cameraxexample.databinding.FragmentFirstBinding
+import com.example.cameraxexample.model.GalleryModel
+import com.example.cameraxexample.viewmodel.MyViewModel
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,7 +34,7 @@ import java.util.concurrent.Executors
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
+class FirstFragment : Fragment(), ClickImageCallback {
 
     private var _binding: FragmentFirstBinding? = null
 
@@ -46,6 +52,8 @@ class FirstFragment : Fragment() {
     private var imageCapture: ImageCapture? = null
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+
+    private lateinit var adapter: GalleryAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,6 +74,8 @@ class FirstFragment : Fragment() {
 
         handleButtonAction()
 
+        initRecyclerView()
+
         if (allPermissionsGranted()) {
             startCamera()
         } else {
@@ -84,6 +94,14 @@ class FirstFragment : Fragment() {
         binding.captureViewId.captureButton.setOnClickListener { captureImage() }
     }
 
+    private fun initRecyclerView() {
+        adapter = GalleryAdapter(MyViewModel.imagesList)
+        adapter.clickImageCallback = this
+        binding.previewViewId.galleryList.adapter = adapter
+        binding.previewViewId.galleryList.layoutManager = LinearLayoutManager(activity)
+        binding.previewViewId.galleryList.setHasFixedSize(false)
+    }
+
     private fun handleButtonAction() {
         binding.backIcon.setOnClickListener {
             findNavController().navigateUp()
@@ -97,7 +115,7 @@ class FirstFragment : Fragment() {
 
         binding.previewViewId.doneBtn.containerView.setOnClickListener {
             Toast.makeText(requireContext(), "it's done", Toast.LENGTH_LONG).show()
-            findNavController().navigateUp()
+            findNavController().navigate(R.id.SecondFragment)
         }
 
     }
@@ -166,6 +184,14 @@ class FirstFragment : Fragment() {
                     binding.previewViewId.previewLayout.visibility = View.VISIBLE
                     val savedUri = output.savedUri ?: photoFile.toUri()
                     binding.previewViewId.imageCaptured.setImageURI(savedUri)
+
+                    MyViewModel.imagesList.forEach {
+                        it.isChecked = false
+                    }
+                    MyViewModel.imagesList.add(GalleryModel(savedUri, true))
+
+                    adapter.updateList(MyViewModel.imagesList)
+
                     val msg = "Image captured: $savedUri"
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
@@ -214,5 +240,9 @@ class FirstFragment : Fragment() {
         super.onDestroyView()
         cameraExecutor.shutdown()
         _binding = null
+    }
+
+    override fun onDeleteImageClick(galleryModel: GalleryModel) {
+        binding.previewViewId.imageCaptured.setImageURI(galleryModel.uri)
     }
 }

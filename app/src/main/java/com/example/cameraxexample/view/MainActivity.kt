@@ -1,10 +1,10 @@
-package com.example.cameraxexample
+package com.example.cameraxexample.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.cameraxexample.R
 import com.example.cameraxexample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
