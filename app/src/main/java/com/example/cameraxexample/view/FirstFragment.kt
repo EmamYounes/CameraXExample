@@ -2,16 +2,17 @@ package com.example.cameraxexample.view
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,6 +20,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.cameraxexample.R
 import com.example.cameraxexample.adapter.GalleryAdapter
 import com.example.cameraxexample.callbacks.ClickImageCallback
@@ -98,7 +100,8 @@ class FirstFragment : Fragment(), ClickImageCallback {
         adapter = GalleryAdapter(MyViewModel.imagesList)
         adapter.clickImageCallback = this
         binding.previewViewId.galleryList.adapter = adapter
-        binding.previewViewId.galleryList.layoutManager = LinearLayoutManager(activity)
+        binding.previewViewId.galleryList.layoutManager =
+            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         binding.previewViewId.galleryList.setHasFixedSize(false)
     }
 
@@ -134,7 +137,7 @@ class FirstFragment : Fragment(), ClickImageCallback {
                 .also { it.setSurfaceProvider(binding.captureViewId.previewView.surfaceProvider) }
 
             // Set up the image capture use case
-            imageCapture = ImageCapture.Builder()
+            imageCapture = ImageCapture.Builder().setTargetAspectRatio(AspectRatio.RATIO_16_9)
                 .build()
 
             // Select the back camera as the default camera
@@ -183,8 +186,10 @@ class FirstFragment : Fragment(), ClickImageCallback {
                     binding.captureViewId.captureLayout.visibility = View.GONE
                     binding.previewViewId.previewLayout.visibility = View.VISIBLE
                     val savedUri = output.savedUri ?: photoFile.toUri()
-                    binding.previewViewId.imageCaptured.setImageURI(savedUri)
+                    val imageView = binding.previewViewId.imageCaptured
 
+//                    displayImageInImageView(savedUri)
+                    imageView.setImageURI(savedUri)
                     MyViewModel.imagesList.forEach {
                         it.isChecked = false
                     }
@@ -203,8 +208,48 @@ class FirstFragment : Fragment(), ClickImageCallback {
             }
         )
     }
+    private fun displayImageInImageView(uri: Uri) {
+        val imageView = binding.previewViewId.imageCaptured
+        imageView.scaleType = ImageView.ScaleType.MATRIX
 
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+            BitmapFactory.decodeFile(uri.path, this)
+        }
 
+        val imageWidth = options.outWidth
+        val imageHeight = options.outHeight
+
+        val imageViewWidth = imageView.width
+        val imageViewHeight = imageView.height
+
+        val targetAspectRatio = 16f / 9f
+        val imageAspectRatio = imageWidth.toFloat() / imageHeight
+
+        val scale: Float
+        val dx: Float
+        val dy: Float
+
+        if (imageAspectRatio > targetAspectRatio) {
+            scale = imageViewWidth.toFloat() / imageWidth
+            dx = 0f
+            dy = (imageViewHeight - imageHeight * scale) / 2f
+        } else {
+            scale = imageViewHeight.toFloat() / imageHeight
+            dx = (imageViewWidth - imageWidth * scale) / 2f
+            dy = 0f
+        }
+
+        val matrix = Matrix()
+        matrix.postScale(scale, scale)
+        matrix.postTranslate(dx, dy)
+
+        imageView.imageMatrix = matrix
+
+        Glide.with(this)
+            .load(uri)
+            .into(imageView)
+    }
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
@@ -242,7 +287,7 @@ class FirstFragment : Fragment(), ClickImageCallback {
         _binding = null
     }
 
-    override fun onDeleteImageClick(galleryModel: GalleryModel) {
+    override fun onSelectedImage(galleryModel: GalleryModel) {
         binding.previewViewId.imageCaptured.setImageURI(galleryModel.uri)
     }
 }

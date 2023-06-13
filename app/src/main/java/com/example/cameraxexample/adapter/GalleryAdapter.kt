@@ -47,7 +47,7 @@ class GalleryAdapter(var list: MutableList<GalleryModel>) :
                 binding.deleteImage.visibility = View.VISIBLE
                 binding.imageLayout.background = ContextCompat.getDrawable(
                     binding.root.context,
-                    R.drawable.border_button_white_background
+                    R.drawable.white_border_for_image
                 )
             } else {
                 binding.imageLayout.background = null
@@ -58,16 +58,13 @@ class GalleryAdapter(var list: MutableList<GalleryModel>) :
 
         override fun onClick(v: View?) {
             val position = v?.tag as Int
-            if (binding.imageLayout.id == v.id) {
-                if (!list[position].isChecked) {
-                    list[position].isChecked = true
-                    updateList(position, list[position])
-                }
-
-            } else if (binding.deleteImage.id == v.id) {
+            if (list[position].isChecked) {
                 removeItem(position)
-                clickImageCallback.onDeleteImageClick(list[position])
+            } else {
+                list[position].isChecked = true
+                updateList(position, list[position])
             }
+            clickImageCallback.onSelectedImage(list[position - 1])
         }
 
 
@@ -75,7 +72,7 @@ class GalleryAdapter(var list: MutableList<GalleryModel>) :
 
     private fun removeItem(position: Int) {
         list.removeAt(position)
-        list[position].isChecked = true
+        list[position - 1].isChecked = true
         notifyItemChanged(position)
     }
 
