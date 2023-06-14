@@ -195,6 +195,8 @@ class FirstFragment : Fragment(), ClickImageCallback {
                     }
                     MyViewModel.imagesList.add(GalleryModel(savedUri, true))
 
+                    setVisibilityGalleryList()
+
                     adapter.updateList(MyViewModel.imagesList)
 
                     val msg = "Image captured: $savedUri"
@@ -208,6 +210,14 @@ class FirstFragment : Fragment(), ClickImageCallback {
             }
         )
     }
+
+    private fun setVisibilityGalleryList() {
+        if (MyViewModel.imagesList.size > 1)
+            binding.previewViewId.galleryList.visibility = View.VISIBLE
+        else
+            binding.previewViewId.galleryList.visibility = View.GONE
+    }
+
     private fun displayImageInImageView(uri: Uri) {
         val imageView = binding.previewViewId.imageCaptured
         imageView.scaleType = ImageView.ScaleType.MATRIX
@@ -250,6 +260,7 @@ class FirstFragment : Fragment(), ClickImageCallback {
             .load(uri)
             .into(imageView)
     }
+
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
@@ -289,5 +300,7 @@ class FirstFragment : Fragment(), ClickImageCallback {
 
     override fun onSelectedImage(galleryModel: GalleryModel) {
         binding.previewViewId.imageCaptured.setImageURI(galleryModel.uri)
+        MyViewModel.imagesList = adapter.list
+        setVisibilityGalleryList()
     }
 }

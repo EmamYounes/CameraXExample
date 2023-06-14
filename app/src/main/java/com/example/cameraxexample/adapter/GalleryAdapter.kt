@@ -3,6 +3,7 @@ package com.example.cameraxexample.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cameraxexample.R
@@ -50,6 +51,7 @@ class GalleryAdapter(var list: MutableList<GalleryModel>) :
                     R.drawable.white_border_for_image
                 )
             } else {
+                binding.deleteImage.visibility = View.GONE
                 binding.imageLayout.background = null
             }
 
@@ -57,14 +59,18 @@ class GalleryAdapter(var list: MutableList<GalleryModel>) :
         }
 
         override fun onClick(v: View?) {
-            val position = v?.tag as Int
+            var position = v?.tag as Int
             if (list[position].isChecked) {
                 removeItem(position)
+
+                if (position != 0)
+                    position -= 1
+
             } else {
                 list[position].isChecked = true
                 updateList(position, list[position])
             }
-            clickImageCallback.onSelectedImage(list[position - 1])
+            clickImageCallback.onSelectedImage(list[position])
         }
 
 
@@ -72,13 +78,17 @@ class GalleryAdapter(var list: MutableList<GalleryModel>) :
 
     private fun removeItem(position: Int) {
         list.removeAt(position)
-        list[position - 1].isChecked = true
-        notifyItemChanged(position)
+        val itemPosition = if (position != 0)
+            position - 1
+        else
+            0
+        list[itemPosition].isChecked = true
+        notifyDataSetChanged()
     }
 
     private fun updateList(position: Int, model: GalleryModel) {
         list[position] = model
-        notifyItemChanged(position)
+        notifyDataSetChanged()
     }
 
     fun updateList(list: MutableList<GalleryModel>) {
