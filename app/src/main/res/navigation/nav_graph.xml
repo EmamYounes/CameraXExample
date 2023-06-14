@@ -9,20 +9,39 @@
         android:id="@+id/FirstFragment"
         android:name="com.example.cameraxexample.view.FirstFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first" >
+        tools:layout="@layout/fragment_first">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            app:destination="@id/FrontScanningFragment" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.cameraxexample.view.SecondFragment"
+        android:id="@+id/FrontScanningFragment"
+        android:name="com.example.cameraxexample.view.ScanningFragment"
         android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second" >
+        tools:layout="@layout/fragment_scanning">
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/BackScanningFragment"
+        android:name="com.example.cameraxexample.view.ScanningFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_scanning">
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/previewScanningFragment"
+        android:name="com.example.cameraxexample.view.PreviewScanningFragment"
+        tools:layout="@layout/preview_scanning_fragment" />
+    <fragment
+        android:id="@+id/previewScanningFragment2"
+        android:name="com.example.cameraxexample.view.PreviewScanningFragment"
+        tools:layout="@layout/preview_scanning_fragment" />
 </navigation>

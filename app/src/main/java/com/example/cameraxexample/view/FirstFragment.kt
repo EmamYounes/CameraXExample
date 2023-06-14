@@ -78,7 +78,7 @@ class FirstFragment : BaseCameraFragment(), ClickImageCallback {
 
         binding.previewViewId.doneBtn.containerView.setOnClickListener {
             Toast.makeText(requireContext(), "it's done", Toast.LENGTH_LONG).show()
-            findNavController().navigate(R.id.SecondFragment)
+            findNavController().navigate(R.id.FrontScanningFragment)
         }
 
     }
@@ -103,7 +103,6 @@ class FirstFragment : BaseCameraFragment(), ClickImageCallback {
     }
 
     override fun captureImageCallback(output: ImageCapture.OutputFileResults) {
-        super.captureImageCallback(output)
         binding.captureViewId.captureLayout.visibility = View.GONE
         binding.previewViewId.previewLayout.visibility = View.VISIBLE
         val savedUri = output.savedUri ?: photoFile.toUri()

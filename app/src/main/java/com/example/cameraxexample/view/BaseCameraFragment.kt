@@ -163,9 +163,7 @@ abstract class BaseCameraFragment : Fragment() {
         }
     }
 
-    open fun captureImageCallback(output: ImageCapture.OutputFileResults) {
-
-    }
+    abstract fun captureImageCallback(output: ImageCapture.OutputFileResults)
 
     abstract fun previewView(): PreviewView?
 
