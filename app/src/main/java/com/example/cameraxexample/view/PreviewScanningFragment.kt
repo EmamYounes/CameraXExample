@@ -1,5 +1,6 @@
 package com.example.cameraxexample.view
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -39,10 +40,13 @@ class PreviewScanningFragment() : Fragment() {
 
     private fun bindView() {
         val imageView = binding.previewViewId.imageCaptured
-        var savedUri = MyViewModel.savedUriBack
-        if (findNavController().currentDestination?.id == R.id.previewScanningFragment) {
-            savedUri = MyViewModel.savedUriFront
-        }
+
+        val savedUri: Uri =
+            if (findNavController().currentDestination?.id == R.id.previewScanningFragment) {
+                MyViewModel.savedUriFront
+            } else {
+                MyViewModel.savedUriBack
+            }
 
         imageView.setImageURI(savedUri)
         binding.previewViewId.addMoreBtn.containerView.setOnClickListener {

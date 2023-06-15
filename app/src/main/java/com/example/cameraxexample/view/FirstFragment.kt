@@ -52,8 +52,6 @@ class FirstFragment : BaseCameraFragment(), ClickImageCallback {
         super.bindView()
         handleButtonAction()
         initRecyclerView()
-        // Set up the capture button click listener
-        binding.captureViewId.captureButton.setOnClickListener { captureImage() }
     }
 
     private fun initRecyclerView() {
@@ -127,4 +125,7 @@ class FirstFragment : BaseCameraFragment(), ClickImageCallback {
         return binding.captureViewId.previewView
     }
 
+    override fun captureButton(): View {
+        return binding.captureViewId.captureButton
+    }
 }

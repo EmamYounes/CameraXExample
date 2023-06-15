@@ -36,7 +36,7 @@ class ScanningFragment : BaseCameraFragment() {
 
     override fun bindView() {
         super.bindView()
-        if (findNavController().currentDestination?.id == R.id.previewScanningFragment2) {
+        if (findNavController().currentDestination?.id == R.id.BackScanningFragment) {
             binding.title.text = "Car plate back"
         }
     }
@@ -56,6 +56,10 @@ class ScanningFragment : BaseCameraFragment() {
 
     override fun previewView(): PreviewView {
         return binding.captureViewId.previewView
+    }
+
+    override fun captureButton(): View {
+        return binding.captureViewId.captureButton
     }
 
     override fun onDestroyView() {

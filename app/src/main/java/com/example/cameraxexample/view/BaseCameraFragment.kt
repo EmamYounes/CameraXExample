@@ -60,6 +60,9 @@ abstract class BaseCameraFragment : Fragment() {
                 .format(System.currentTimeMillis()) + ".jpg"
         )
 
+        // Set up the capture button click listener
+        captureButton().setOnClickListener { captureImage() }
+
     }
 
     private fun getOutputDirectoryFile(): File {
@@ -166,6 +169,7 @@ abstract class BaseCameraFragment : Fragment() {
     abstract fun captureImageCallback(output: ImageCapture.OutputFileResults)
 
     abstract fun previewView(): PreviewView?
+    abstract fun captureButton(): View
 
 
 }
