@@ -96,7 +96,7 @@ class FirstFragment : BaseCameraFragment(), ClickImageCallback {
 
     override fun onSelectedImage(galleryModel: GalleryModel) {
         binding.previewViewId.imageCaptured.setImageURI(galleryModel.uri)
-        MyViewModel.imagesList = adapter.list
+        MyViewModel.imagesList = adapter.getList()
         setVisibilityGalleryList()
     }
 
@@ -111,6 +111,9 @@ class FirstFragment : BaseCameraFragment(), ClickImageCallback {
             it.isChecked = false
         }
         MyViewModel.imagesList.add(GalleryModel(savedUri, true))
+
+        if (MyViewModel.imagesList.size > 6)
+            binding.previewViewId.addMoreBtn.containerView.visibility = View.GONE
 
         setVisibilityGalleryList()
 
