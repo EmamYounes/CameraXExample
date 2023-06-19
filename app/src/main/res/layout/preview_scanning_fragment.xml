@@ -28,7 +28,7 @@
 
     <include
         android:id="@+id/previewViewId"
-        layout="@layout/preview_view"
+        layout="@layout/preview_view_scanning"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

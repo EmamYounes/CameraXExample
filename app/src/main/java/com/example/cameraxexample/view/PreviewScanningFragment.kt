@@ -111,12 +111,15 @@ class PreviewScanningFragment() : Fragment() {
 
     fun showPreviousImage() {
         binding.previewViewId.imageCaptured.setImageURI(MyViewModel.savedUriFront)
+        binding.previewViewId.imageCaptured.scaleType = ImageView.ScaleType.CENTER_CROP
+
     }
 
     // Function to show the next image
     fun showNextImage() {
         if (MyViewModel.isSavedUriBackInit())
             binding.previewViewId.imageCaptured.setImageURI(MyViewModel.savedUriBack)
+        binding.previewViewId.imageCaptured.scaleType = ImageView.ScaleType.CENTER_CROP
     }
 
 }
