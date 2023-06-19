@@ -12,5 +12,8 @@ object MyViewModel : ViewModel() {
     lateinit var savedUriFront: Uri
     lateinit var savedUriBack: Uri
 
+    fun isSavedUriBackInit(): Boolean {
+        return this::savedUriBack.isInitialized
+    }
 
 }
