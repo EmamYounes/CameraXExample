@@ -3,6 +3,7 @@ package com.example.cameraxexample.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cameraxexample.R
@@ -42,6 +43,7 @@ class GalleryAdapter(private var list: MutableList<GalleryModel>) :
             binding.imageLayout.tag = adapterPosition
             binding.deleteImage.tag = adapterPosition
             binding.imageId.setImageURI(model.uri)
+            binding.imageId.scaleType = ImageView.ScaleType.CENTER_CROP
 
             if (model.isChecked) {
                 binding.deleteImage.visibility = View.VISIBLE

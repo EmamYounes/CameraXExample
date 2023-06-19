@@ -55,7 +55,14 @@ class ScanningFragment : BaseCameraFragment() {
     }
 
     override fun previewView(): PreviewView {
-        return binding.captureViewId.previewView
+        val previewView = binding.captureViewId.previewView
+        val desiredWidth = previewView.width
+        val desiredHeight = 600
+        val layoutParams = previewView.layoutParams
+        layoutParams.width = desiredWidth
+        layoutParams.height = desiredHeight
+        previewView.layoutParams = layoutParams
+        return previewView
     }
 
     override fun captureButton(): View {

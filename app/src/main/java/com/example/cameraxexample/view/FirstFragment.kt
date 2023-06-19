@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.camera.core.ImageCapture
 import androidx.camera.view.PreviewView
@@ -107,6 +108,7 @@ class FirstFragment : BaseCameraFragment(), ClickImageCallback {
         val imageView = binding.previewViewId.imageCaptured
 
         imageView.setImageURI(savedUri)
+        imageView.scaleType = ImageView.ScaleType.CENTER_CROP
         MyViewModel.imagesList.forEach {
             it.isChecked = false
         }
