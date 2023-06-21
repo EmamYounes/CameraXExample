@@ -16,16 +16,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cameraxexample.R
 import com.example.cameraxexample.adapter.GalleryAdapter
 import com.example.cameraxexample.callbacks.ClickImageCallback
-import com.example.cameraxexample.databinding.FragmentFirstBinding
+import com.example.cameraxexample.databinding.FragmentCameraBinding
 import com.example.cameraxexample.model.GalleryModel
 import com.example.cameraxexample.viewmodel.MyViewModel
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : BaseCameraFragment(), ClickImageCallback {
+class CameraFragment : BaseCameraFragment(), ClickImageCallback {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentCameraBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -39,9 +39,8 @@ class FirstFragment : BaseCameraFragment(), ClickImageCallback {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentCameraBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
