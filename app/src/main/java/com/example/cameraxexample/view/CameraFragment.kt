@@ -11,6 +11,7 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.view.PreviewView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cameraxexample.R
@@ -19,6 +20,8 @@ import com.example.cameraxexample.callbacks.ClickImageCallback
 import com.example.cameraxexample.databinding.FragmentCameraBinding
 import com.example.cameraxexample.model.GalleryModel
 import com.example.cameraxexample.viewmodel.MyViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -101,30 +104,31 @@ class CameraFragment : BaseCameraFragment(), ClickImageCallback {
     }
 
     override fun captureImageCallback(output: ImageCapture.OutputFileResults) {
-        binding.captureViewId.captureLayout.visibility = View.GONE
-        binding.previewViewId.previewLayout.visibility = View.VISIBLE
-        val savedUri = output.savedUri ?: photoFile.toUri()
-        val imageView = binding.previewViewId.imageCaptured
+        viewLifecycleOwner.lifecycleScope.launch {
+            binding.captureViewId.captureLayout.visibility = View.GONE
+            binding.previewViewId.previewLayout.visibility = View.VISIBLE
+            val savedUri = output.savedUri ?: photoFile.toUri()
+            val imageView = binding.previewViewId.imageCaptured
 
-        imageView.setImageURI(savedUri)
-        imageView.scaleType = ImageView.ScaleType.CENTER_CROP
-        MyViewModel.imagesList.forEach {
-            it.isChecked = false
+            imageView.setImageURI(savedUri)
+            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+            MyViewModel.imagesList.forEach {
+                it.isChecked = false
+            }
+            MyViewModel.imagesList.add(GalleryModel(savedUri, true))
+
+            if (MyViewModel.imagesList.size > 6)
+                binding.previewViewId.addMoreBtn.containerView.visibility = View.GONE
+
+            setVisibilityGalleryList()
+
+            adapter.updateList(MyViewModel.imagesList)
+
+            val msg = "Image captured: $savedUri"
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            Log.d(TAG, msg)
         }
-        MyViewModel.imagesList.add(GalleryModel(savedUri, true))
-
-        if (MyViewModel.imagesList.size > 6)
-            binding.previewViewId.addMoreBtn.containerView.visibility = View.GONE
-
-        setVisibilityGalleryList()
-
-        adapter.updateList(MyViewModel.imagesList)
-
-        val msg = "Image captured: $savedUri"
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-        Log.d(TAG, msg)
     }
-
     override fun previewView(): PreviewView {
         return binding.captureViewId.previewView
     }

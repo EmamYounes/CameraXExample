@@ -8,10 +8,12 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.view.PreviewView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.cameraxexample.R
 import com.example.cameraxexample.databinding.FragmentScanningBinding
 import com.example.cameraxexample.viewmodel.MyViewModel
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -42,27 +44,21 @@ class ScanningFragment : BaseCameraFragment() {
     }
 
     override fun captureImageCallback(output: ImageCapture.OutputFileResults) {
+        viewLifecycleOwner.lifecycleScope.launch {
 
-        val savedUri = output.savedUri ?: photoFile.toUri()
-        if (findNavController().currentDestination?.id == R.id.FrontScanningFragment) {
-            MyViewModel.savedUriFront = savedUri
-            findNavController().navigate(R.id.previewScanningFragment)
-        } else {
-            MyViewModel.savedUriBack = savedUri
-            findNavController().navigate(R.id.previewScanningFragment2)
+            val savedUri = output.savedUri ?: photoFile.toUri()
+            if (findNavController().currentDestination?.id == R.id.FrontScanningFragment) {
+                MyViewModel.savedUriFront = savedUri
+                findNavController().navigate(R.id.previewScanningFragment)
+            } else {
+                MyViewModel.savedUriBack = savedUri
+                findNavController().navigate(R.id.previewScanningFragment2)
+            }
         }
-
     }
 
     override fun previewView(): PreviewView {
-        val previewView = binding.captureViewId.previewView
-//        val desiredWidth = previewView.width
-//        val desiredHeight = 600
-//        val layoutParams = previewView.layoutParams
-//        layoutParams.width = desiredWidth
-//        layoutParams.height = desiredHeight
-//        previewView.layoutParams = layoutParams
-        return previewView
+        return binding.captureViewId.previewView
     }
 
     override fun captureButton(): View {

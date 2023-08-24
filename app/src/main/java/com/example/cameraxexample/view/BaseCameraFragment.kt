@@ -12,7 +12,10 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.cameraxexample.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -114,37 +117,41 @@ abstract class BaseCameraFragment : Fragment() {
     }
 
     fun captureImage() {
-        val imageCapture = imageCapture ?: return
 
-        // Create a file with a timestamped name in the output directory
-        val photoFile = File(
-            outputDirectory,
-            SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-                .format(System.currentTimeMillis()) + ".jpg"
-        )
+        lifecycleScope.launch(Dispatchers.IO) {
 
-        // Create a metadata object with rotation information
-        val metadata = ImageCapture.Metadata()
+            val imageCapture = imageCapture ?: return@launch
 
-        // Create an output options object which contains the file and metadata
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
-            .setMetadata(metadata)
-            .build()
+            // Create a file with a timestamped name in the output directory
+            val photoFile = File(
+                outputDirectory,
+                SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+                    .format(System.currentTimeMillis()) + ".jpg"
+            )
 
-        // Capture the image
-        imageCapture.takePicture(
-            outputOptions, ContextCompat.getMainExecutor(requireContext()),
-            object : ImageCapture.OnImageSavedCallback {
-                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+            // Create a metadata object with rotation information
+            val metadata = ImageCapture.Metadata()
 
-                    captureImageCallback(output)
+            // Create an output options object which contains the file and metadata
+            val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
+                .setMetadata(metadata)
+                .build()
+
+            // Capture the image
+            imageCapture.takePicture(
+                outputOptions, ContextCompat.getMainExecutor(requireContext()),
+                object : ImageCapture.OnImageSavedCallback {
+                    override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+
+                        captureImageCallback(output)
+                    }
+
+                    override fun onError(exception: ImageCaptureException) {
+                        Log.e(TAG, "Error capturing image", exception)
+                    }
                 }
-
-                override fun onError(exception: ImageCaptureException) {
-                    Log.e(TAG, "Error capturing image", exception)
-                }
-            }
-        )
+            )
+        }
     }
 
     @Deprecated("Deprecated in Java")
