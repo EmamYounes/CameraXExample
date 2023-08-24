@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -31,8 +30,8 @@ abstract class BaseCameraFragment : Fragment() {
         const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
 
-    var imageCapture: ImageCapture? = null
-    lateinit var outputDirectory: File
+    private var imageCapture: ImageCapture? = null
+    private lateinit var outputDirectory: File
     lateinit var cameraExecutor: ExecutorService
 
     lateinit var photoFile: File
@@ -47,8 +46,10 @@ abstract class BaseCameraFragment : Fragment() {
         if (allPermissionsGranted()) {
             startCamera()
         } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+            this.requestPermissions(
+                arrayOf(
+                    Manifest.permission.CAMERA
+                ), REQUEST_CODE_PERMISSIONS
             )
         }
 
@@ -76,11 +77,11 @@ abstract class BaseCameraFragment : Fragment() {
             mediaDir else requireActivity().filesDir
     }
 
-    fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun startCamera() {
+    private fun startCamera() {
         // Create an instance of the ProcessCameraProvider
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
@@ -116,7 +117,7 @@ abstract class BaseCameraFragment : Fragment() {
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
-    fun captureImage() {
+    private fun captureImage() {
 
         lifecycleScope.launch(Dispatchers.IO) {
 
