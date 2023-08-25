@@ -4,10 +4,11 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.example.cameraxexample.R
 import com.example.cameraxexample.databinding.PreviewScanningFragmentBinding
 import com.example.cameraxexample.viewmodel.MyViewModel
@@ -50,8 +51,10 @@ class PreviewScanningFragment() : Fragment() {
                 MyViewModel.savedUriBack
             }
 
-        imageView.setImageURI(savedUri)
-        imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+        Glide.with(binding.root.context)
+            .load(savedUri)
+            .transform(CenterCrop()) // Apply any transformations you need
+            .into(imageView)
 
         // Set up GestureDetector to detect swipe gestures
         val gestureDetector =
@@ -110,16 +113,20 @@ class PreviewScanningFragment() : Fragment() {
     }
 
     fun showPreviousImage() {
-        binding.previewViewId.imageCaptured.setImageURI(MyViewModel.savedUriFront)
-        binding.previewViewId.imageCaptured.scaleType = ImageView.ScaleType.CENTER_CROP
-
+        Glide.with(binding.root.context)
+            .load(MyViewModel.savedUriFront)
+            .transform(CenterCrop()) // Apply any transformations you need
+            .into(binding.previewViewId.imageCaptured)
     }
 
     // Function to show the next image
     fun showNextImage() {
-        if (MyViewModel.isSavedUriBackInit())
-            binding.previewViewId.imageCaptured.setImageURI(MyViewModel.savedUriBack)
-        binding.previewViewId.imageCaptured.scaleType = ImageView.ScaleType.CENTER_CROP
+        if (MyViewModel.isSavedUriBackInit()) {
+            Glide.with(binding.root.context)
+                .load(MyViewModel.savedUriBack)
+                .transform(CenterCrop()) // Apply any transformations you need
+                .into(binding.previewViewId.imageCaptured)
+        }
     }
 
 }

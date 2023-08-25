@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.example.cameraxexample.R
 import com.example.cameraxexample.adapter.GalleryAdapter
 import com.example.cameraxexample.callbacks.ClickImageCallback
@@ -22,6 +24,7 @@ import com.example.cameraxexample.model.GalleryModel
 import com.example.cameraxexample.viewmodel.MyViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -98,37 +101,63 @@ class CameraFragment : BaseCameraFragment(), ClickImageCallback {
     }
 
     override fun onSelectedImage(galleryModel: GalleryModel) {
-        binding.previewViewId.imageCaptured.setImageURI(galleryModel.uri)
-        MyViewModel.imagesList = adapter.getList()
-        setVisibilityGalleryList()
+        viewLifecycleOwner.lifecycleScope.launch {
+            Glide.with(binding.root.context)
+                .load(galleryModel.uri)
+                .into(binding.previewViewId.imageCaptured)
+            MyViewModel.imagesList = adapter.getList()
+            withContext(Dispatchers.Main) {
+                setVisibilityGalleryList()
+            }
+        }
     }
 
     override fun captureImageCallback(output: ImageCapture.OutputFileResults) {
         viewLifecycleOwner.lifecycleScope.launch {
-            binding.captureViewId.captureLayout.visibility = View.GONE
-            binding.previewViewId.previewLayout.visibility = View.VISIBLE
             val savedUri = output.savedUri ?: photoFile.toUri()
-            val imageView = binding.previewViewId.imageCaptured
 
-            imageView.setImageURI(savedUri)
-            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+            // Perform data manipulation and updates
+            val newGalleryModel = GalleryModel(savedUri, true)
             MyViewModel.imagesList.forEach {
                 it.isChecked = false
             }
-            MyViewModel.imagesList.add(GalleryModel(savedUri, true))
+            MyViewModel.imagesList.add(newGalleryModel)
 
-            if (MyViewModel.imagesList.size > 6)
+            // Ensure that the list size doesn't exceed the limit
+            if (MyViewModel.imagesList.size > 6) {
                 binding.previewViewId.addMoreBtn.containerView.visibility = View.GONE
+            }
 
+            // Update the adapter list
+            withContext(Dispatchers.Main) {
+                adapter.updateList(MyViewModel.imagesList)
+            }
+
+            // Set visibility for the gallery list
             setVisibilityGalleryList()
 
-            adapter.updateList(MyViewModel.imagesList)
-
+            // Notify the user about the image capture
             val msg = "Image captured: $savedUri"
             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
             Log.d(TAG, msg)
+
+            // Update the UI on the main thread
+            updateUIOnMainThread()
         }
     }
+
+    private fun updateUIOnMainThread() {
+        requireActivity().runOnUiThread {
+            binding.captureViewId.captureLayout.visibility = View.GONE
+            binding.previewViewId.previewLayout.visibility = View.VISIBLE
+            val savedUri = MyViewModel.imagesList.last().uri
+            Glide.with(binding.root.context)
+                .load(savedUri)
+                .transform(CenterCrop()) // Apply any transformations you need
+                .into(binding.previewViewId.imageCaptured)
+        }
+    }
+
     override fun previewView(): PreviewView {
         return binding.captureViewId.previewView
     }

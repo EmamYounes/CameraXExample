@@ -3,9 +3,10 @@ package com.example.cameraxexample.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.example.cameraxexample.R
 import com.example.cameraxexample.callbacks.ClickImageCallback
 import com.example.cameraxexample.databinding.GalleryItemBinding
@@ -42,8 +43,12 @@ class GalleryAdapter(private var list: MutableList<GalleryModel>) :
         fun bind(model: GalleryModel) {
             binding.imageLayout.tag = adapterPosition
             binding.deleteImage.tag = adapterPosition
-            binding.imageId.setImageURI(model.uri)
-            binding.imageId.scaleType = ImageView.ScaleType.CENTER_CROP
+
+            // Load and resize the image using Glide
+            Glide.with(binding.root.context)
+                .load(model.uri)
+                .transform(CenterCrop()) // Apply any transformations you need
+                .into(binding.imageId)
 
             if (model.isChecked) {
                 binding.deleteImage.visibility = View.VISIBLE
