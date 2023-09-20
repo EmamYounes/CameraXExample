@@ -1,6 +1,7 @@
 package com.example.cameraxexample.view
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -22,5 +23,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun showLoadingPercentageLayout() {
+        binding.loadingPercentageLayout.mainLayout.visibility = View.VISIBLE
+    }
+
+    fun hideLoadingPercentageLayout() {
+        runOnUiThread {
+            binding.loadingPercentageLayout.percentage.text = ""
+            binding.loadingPercentageLayout.mainLayout.visibility = View.GONE
+        }
+    }
 
 }

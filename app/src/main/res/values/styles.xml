@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextStyle1">
+        <item name="android:textSize">9sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textDirection">ltr</item>
+    </style>
+
+</resources>

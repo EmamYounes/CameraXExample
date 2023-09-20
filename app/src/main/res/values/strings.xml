@@ -9,4 +9,7 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="uploading">uploading</string>
+    <string name="you_reached_the_maximum_number_of_allowed_photos">You reached the maximum number of allowed photos</string>
+    <string name="done">Done\n</string>
 </resources>

@@ -5,34 +5,31 @@
     android:id="@+id/previewLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/screenNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle_sugar_cane_60dp_radius"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1 of 1" />
 
     <ImageView
         android:id="@+id/imageCaptured"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="260dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/galleryList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:listitem="@layout/gallery_item">
-
-    </androidx.recyclerview.widget.RecyclerView>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="0dp"
         android:layout_height="120dp"
-        android:background="@color/black"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

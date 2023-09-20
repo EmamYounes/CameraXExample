@@ -11,12 +11,11 @@
         android:id="@+id/toolbarView"
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        android:background="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/backIcon"
+            android:id="@+id/closeIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
